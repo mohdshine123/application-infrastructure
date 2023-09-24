@@ -1,0 +1,32 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan-dev:
+    uses: sede-x/github-cicd-workflows/.github/workflows/aws_azure-terraform-plan.yaml@v1.8.2
+    with:
+      cloud_provider: 'AWS'
+      environment: dev
+      path: terraform
+      aws_region: ${{ vars.AWS_REGION }}
+      terraform_version: "${{ vars.TERRAFORM_VERSION }}"
+    secrets: inherit
+  deploy-dev:
+    needs: [plan-dev]
+    uses: sede-x/github-cicd-workflows/.github/workflows/aws_azure-terraform-apply.yaml@v1.8.2
+    with:
+      cloud_provider: 'AWS'
+      environment: dev
+      path: terraform
+      aws_region: ${{ vars.AWS_REGION }}
+      terraform_version: "${{ vars.TERRAFORM_VERSION }}"
+    secrets: inherit

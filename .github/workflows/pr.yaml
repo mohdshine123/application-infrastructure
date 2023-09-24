@@ -1,0 +1,16 @@
+name: Terraform PR Check
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  plan-dev:
+    uses: sede-x/github-cicd-workflows/.github/workflows/aws_azure-terraform-plan.yaml@v1.8.2
+    with:
+      cloud_provider: 'AWS'
+      environment: dev
+      path: terraform
+      aws_region: ${{ vars.AWS_REGION }}
+      terraform_version: "${{ vars.TERRAFORM_VERSION }}"
+    secrets: inherit
